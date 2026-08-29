@@ -1,0 +1,20 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.yuuhamu.routerupgradecore.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "routerupgradecore.refmap.json",
+  "mixins": [
+    "ModularRouterBlockEntityMixin",
+    "TargetedModuleMixin",
+    "ModuleExecutionMixin",
+    "UpgradeSlotValidationMixin"
+  ],
+  "client": [
+    "ModularRouterScreenMixin"
+  ],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
