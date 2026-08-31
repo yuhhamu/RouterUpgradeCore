@@ -1,11 +1,9 @@
 package com.yuuhamu.routerupgradecore.mixin;
 
 import com.yuuhamu.routerupgradecore.api.RouterModeProvider;
-import com.yuuhamu.routerupgradecore.internal.BeamDataAccess;
 import com.yuuhamu.routerupgradecore.internal.ModeRegistry;
 import me.desht.modularrouters.block.CamouflageableBlock;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
-import me.desht.modularrouters.util.BeamData;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -13,7 +11,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
@@ -26,21 +23,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.List;
 
 @Mixin(value = ModularRouterBlockEntity.class, remap = false)
 public abstract class ModularRouterBlockEntityMixin {
-
-    @Shadow
-    @Final
-    public List<BeamData> beams;
-
-    @Shadow
-    @Final
-    public List<BeamData> pendingBeams;
-
-    @Shadow
-    private AABB cachedRenderAABB;
 
     @Shadow
     private BlockState camouflage;
@@ -133,21 +118,5 @@ public abstract class ModularRouterBlockEntityMixin {
         cir.setReturnValue(visual);
     }
 
-    @Inject(method = "addItemBeam", at = @At("HEAD"), cancellable = true)
-    private void routerupgradecore$addItemBeam(BeamData beamData, CallbackInfo ci) {
-        ModularRouterBlockEntity router = (ModularRouterBlockEntity) (Object) this;
-        Integer imageColor = ModeRegistry.getActiveImageColor(router);
-        if (imageColor == null) {
-            return;
-        }
-        BeamData recolored = BeamDataAccess.withColor(beamData, imageColor);
-        if (this.nonNullLevel().isClientSide) {
-            this.beams.add(recolored);
-            this.cachedRenderAABB = null;
-        } else {
-            this.pendingBeams.add(recolored);
-        }
-        ci.cancel();
-    }
 }
 
