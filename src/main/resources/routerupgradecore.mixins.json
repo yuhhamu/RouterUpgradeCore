@@ -6,12 +6,17 @@
   "refmap": "routerupgradecore.refmap.json",
   "mixins": [
     "ModularRouterBlockEntityMixin",
+    "ModularRouterBlockEntityVanillaOverrideMixin",
     "TargetedModuleMixin",
     "ModuleExecutionMixin",
-    "UpgradeSlotValidationMixin"
+    "UpgradeSlotValidationMixin",
+    "CompiledModuleAccessor",
+    "BufferHandlerMixin",
+    "ModularRouterCamouflageAccessor"
   ],
   "client": [
-    "ModularRouterScreenMixin"
+    "ModularRouterScreenMixin",
+    "ModularRouterBERMixin"
   ],
   "server": [],
   "injectors": {

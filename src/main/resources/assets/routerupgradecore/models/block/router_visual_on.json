@@ -1,0 +1,40 @@
+{
+  "parent": "minecraft:block/block",
+  "elements": [
+    {
+      "faces": {
+        "down": { "cullface": "down", "texture": "#bottom_body" },
+        "east": { "cullface": "east", "texture": "#side_body" },
+        "north": { "cullface": "north", "texture": "#front_body" },
+        "south": { "cullface": "south", "texture": "#back_body" },
+        "up": { "cullface": "up", "texture": "#top_body" },
+        "west": { "cullface": "west", "texture": "#side_body" }
+      },
+      "from": [0, 0, 0], "to": [16, 16, 16]
+    },
+    {
+      "faces": {
+        "down": { "cullface": "down", "texture": "#bottom_frame", "tintindex": 0 },
+        "east": { "cullface": "east", "texture": "#side_frame", "tintindex": 0 },
+        "north": { "cullface": "north", "texture": "#front_frame", "tintindex": 0 },
+        "south": { "cullface": "south", "texture": "#back_frame", "tintindex": 0 },
+        "up": { "cullface": "up", "texture": "#top_frame", "tintindex": 0 },
+        "west": { "cullface": "west", "texture": "#side_frame", "tintindex": 0 }
+      },
+      "from": [0, 0, 0], "to": [16, 16, 16]
+    }
+  ],
+  "textures": {
+    "particle": "routerupgradecore:block/router_other_body",
+    "front_body": "routerupgradecore:block/router_front_active_body",
+    "front_frame": "routerupgradecore:block/router_front_active_frame_neutral",
+    "side_body": "routerupgradecore:block/router_side_body",
+    "side_frame": "routerupgradecore:block/router_side_frame_neutral",
+    "top_body": "routerupgradecore:block/router_top_body",
+    "top_frame": "routerupgradecore:block/router_top_frame_neutral",
+    "bottom_body": "routerupgradecore:block/router_bottom_body",
+    "bottom_frame": "routerupgradecore:block/router_bottom_frame_neutral",
+    "back_body": "routerupgradecore:block/router_back_body",
+    "back_frame": "routerupgradecore:block/router_back_frame_neutral"
+  }
+}

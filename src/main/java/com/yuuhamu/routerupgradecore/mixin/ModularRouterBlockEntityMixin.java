@@ -8,12 +8,16 @@ import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.util.BeamData;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -39,6 +43,9 @@ public abstract class ModularRouterBlockEntityMixin {
     private AABB cachedRenderAABB;
 
     @Shadow
+    private BlockState camouflage;
+
+    @Shadow
     public abstract Level nonNullLevel();
 
     @Inject(method = "getCapability", at = @At("RETURN"), cancellable = true)
@@ -51,48 +58,28 @@ public abstract class ModularRouterBlockEntityMixin {
         }
     }
 
-    @Inject(method = "load", at = @At("TAIL"))
-    private void routerupgradecore$load(CompoundTag tag, CallbackInfo ci) {
+    @Inject(method = "processClientSync", at = @At("TAIL"))
+    private void routerupgradecore$processClientSync(CompoundTag tag, CallbackInfo ci) {
         ModularRouterBlockEntity router = (ModularRouterBlockEntity) (Object) this;
-        RouterModeProvider provider = ModeRegistry.getActiveProvider(router);
-        if (provider != null) {
-            provider.load(router, tag);
-        }
-    }
 
-    @Inject(method = "saveAdditional", at = @At("TAIL"))
-    private void routerupgradecore$saveAdditional(CompoundTag tag, CallbackInfo ci) {
-        ModularRouterBlockEntity router = (ModularRouterBlockEntity) (Object) this;
-        RouterModeProvider provider = ModeRegistry.getActiveProvider(router);
-        if (provider != null) {
-            provider.saveAdditional(router, tag);
+        Item syncedMarker = null;
+        if (tag.contains(ModeRegistry.CLIENT_SYNC_MARKER_NBT_KEY)) {
+            ResourceLocation id = ResourceLocation.tryParse(tag.getString(ModeRegistry.CLIENT_SYNC_MARKER_NBT_KEY));
+            if (id != null) {
+                syncedMarker = ForgeRegistries.ITEMS.getValue(id);
+            }
         }
-    }
+        ModeRegistry.recordClientSyncedMarker(router, syncedMarker);
 
-    @Inject(method = "getUpdateTag", at = @At("RETURN"))
-    private void routerupgradecore$getUpdateTag(CallbackInfoReturnable<CompoundTag> cir) {
-        ModularRouterBlockEntity router = (ModularRouterBlockEntity) (Object) this;
-        RouterModeProvider provider = ModeRegistry.getActiveProvider(router);
-        if (provider != null) {
-            provider.getUpdateTag(router, cir.getReturnValue());
+        Level level = this.nonNullLevel();
+        if (level.isClientSide) {
+            router.requestModelDataUpdate();
+            level.setBlocksDirty(router.getBlockPos(), Blocks.AIR.defaultBlockState(), router.getBlockState());
         }
-    }
 
-    @Inject(method = "handleUpdateTag", at = @At("TAIL"))
-    private void routerupgradecore$handleUpdateTag(CompoundTag tag, CallbackInfo ci) {
-        ModularRouterBlockEntity router = (ModularRouterBlockEntity) (Object) this;
         RouterModeProvider provider = ModeRegistry.getActiveProvider(router);
         if (provider != null) {
             provider.handleUpdateTag(router, tag);
-        }
-    }
-
-    @Inject(method = "setRemoved", at = @At("TAIL"))
-    private void routerupgradecore$setRemoved(CallbackInfo ci) {
-        ModularRouterBlockEntity router = (ModularRouterBlockEntity) (Object) this;
-        RouterModeProvider provider = ModeRegistry.getActiveProvider(router);
-        if (provider != null) {
-            provider.onRemoved(router);
         }
     }
 
@@ -103,14 +90,20 @@ public abstract class ModularRouterBlockEntityMixin {
         if (provider != null) {
             provider.onCompileUpgrades(router);
         }
+        router.requestModelDataUpdate();
+        Level level = this.nonNullLevel();
+        if (!level.isClientSide) {
+            BlockState state = router.getBlockState();
+            level.sendBlockUpdated(router.getBlockPos(), state, state, 3);
+        }
     }
 
     @Inject(method = "getModelData", at = @At("RETURN"), cancellable = true)
     private void routerupgradecore$getModelData(CallbackInfoReturnable<ModelData> cir) {
-        ModularRouterBlockEntity router = (ModularRouterBlockEntity) (Object) this;
-        if (router.getCamouflage() != null) {
+        if (this.camouflage != null) {
             return;
         }
+        ModularRouterBlockEntity router = (ModularRouterBlockEntity) (Object) this;
         RouterModeProvider provider = ModeRegistry.getActiveProvider(router);
         if (provider == null) {
             return;
@@ -120,20 +113,34 @@ public abstract class ModularRouterBlockEntityMixin {
             return;
         }
         cir.setReturnValue(ModelData.builder().with(CamouflageableBlock.CAMOUFLAGE_STATE, visual).build());
+        router.requestModelDataUpdate();
     }
 
-    @Inject(method = "addItemBeam", at = @At("HEAD"), cancellable = true)
-    private void routerupgradecore$addItemBeam(BeamData beamData, CallbackInfo ci) {
+    @Inject(method = "getCamouflage", at = @At("RETURN"), cancellable = true)
+    private void routerupgradecore$getCamouflage(CallbackInfoReturnable<BlockState> cir) {
+        if (cir.getReturnValue() != null) {
+            return;
+        }
         ModularRouterBlockEntity router = (ModularRouterBlockEntity) (Object) this;
         RouterModeProvider provider = ModeRegistry.getActiveProvider(router);
         if (provider == null) {
             return;
         }
-        Integer overrideColor = provider.getBeamColor(router);
-        if (overrideColor == null) {
+        BlockState visual = provider.getVisualCamouflage(router);
+        if (visual == null) {
             return;
         }
-        BeamData recolored = BeamDataAccess.withColor(beamData, overrideColor);
+        cir.setReturnValue(visual);
+    }
+
+    @Inject(method = "addItemBeam", at = @At("HEAD"), cancellable = true)
+    private void routerupgradecore$addItemBeam(BeamData beamData, CallbackInfo ci) {
+        ModularRouterBlockEntity router = (ModularRouterBlockEntity) (Object) this;
+        Integer imageColor = ModeRegistry.getActiveImageColor(router);
+        if (imageColor == null) {
+            return;
+        }
+        BeamData recolored = BeamDataAccess.withColor(beamData, imageColor);
         if (this.nonNullLevel().isClientSide) {
             this.beams.add(recolored);
             this.cachedRenderAABB = null;
@@ -143,3 +150,4 @@ public abstract class ModularRouterBlockEntityMixin {
         ci.cancel();
     }
 }
+
