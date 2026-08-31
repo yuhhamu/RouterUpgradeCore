@@ -3,7 +3,9 @@ package com.yuuhamu.routerupgradecore.internal;
 import com.yuuhamu.routerupgradecore.api.RouterModeProvider;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraftforge.items.IItemHandler;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -83,9 +85,17 @@ public final class ModeRegistry {
     }
 
     private static Item scanMarkerItem(ModularRouterBlockEntity router) {
-        for (Item candidate : PROVIDERS.keySet()) {
-            if (router.getUpgradeCount(candidate) > 0) {
-                return candidate;
+        // NOTE: router.getUpgradeCount()はVanilla本体のcompileUpgrades()が構築するキャッシュに
+        // 依存しており、compileUpgrades()自体はNBTロード直後ではなく次のtickで初めて実行される
+        // (recompileNeededフラグの遅延コンパイル方式)。そのため load() 直後にgetUpgradeCount()を
+        // 参照すると常に0が返り、実際にはUpgradeが挿入済みでもアクティブなProviderが見つからず、
+        // リログイン直後にタンク等の状態復元が一切行われない不具合の原因になっていた。
+        // upgradesHandlerの生スロットを直接走査することで、このタイミング依存を回避する。
+        IItemHandler upgrades = router.getUpgrades();
+        for (int i = 0; i < upgrades.getSlots(); i++) {
+            ItemStack stack = upgrades.getStackInSlot(i);
+            if (!stack.isEmpty() && PROVIDERS.containsKey(stack.getItem())) {
+                return stack.getItem();
             }
         }
         return null;
