@@ -11,6 +11,8 @@
 
 ### Fixed
 
+- `addItemBeam`で追加されるビームの色を、アクティブなモードの`registerMode()`登録時`imageColor`へ無条件に上書きしていた挙動を削除。各`RouterModeProvider`実装がビームごとに指定した色がそのまま尊重されるようにした(FluidRouterUpgrade側で液体転送の方向ごとに個別の色を設定しても、常に単色になってしまう不具合の原因だった)。
+
 ## [0.1.0] - 2026-08-29
 
 ### Added
