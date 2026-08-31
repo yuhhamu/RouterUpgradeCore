@@ -7,6 +7,8 @@
 
 ### Added
 
+- `RouterUpgradeCore.markBeamNoPulse(BeamData)`APIを新規追加。指定したBeamDataについて、Vanilla本体`ModularRouterBER`が中心ビーム(BEAM_LINE_THICK)に常時適用している1秒周期のアルファ点滅を無効化し、常に最大値で一定描画されるようにする。姉妹アドオンMOD(FluidRouterUpgrade等)が、独自の周辺エフェクトで転送演出を行いたい場合にVanilla本体の点滅と重ならないよう用意した。
+
 ### Changed
 
 ### Fixed
