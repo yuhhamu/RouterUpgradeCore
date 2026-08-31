@@ -2,6 +2,7 @@ package com.yuuhamu.routerupgradecore.mixin;
 
 import com.yuuhamu.routerupgradecore.api.ModuleKind;
 import com.yuuhamu.routerupgradecore.api.RouterModeProvider;
+import com.yuuhamu.routerupgradecore.internal.BeamContinuityRegistry;
 import com.yuuhamu.routerupgradecore.internal.ModeRegistry;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.core.ModItems;
@@ -9,12 +10,27 @@ import me.desht.modularrouters.item.module.ModuleItem;
 import me.desht.modularrouters.logic.compiled.CompiledModule;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.lang.reflect.Field;
 
 @Mixin(value = ModularRouterBlockEntity.class, remap = false)
 public abstract class ModuleExecutionMixin {
+
+    // executeModules()は1回の呼び出しがそのルーターの「稼働タイミング」1回分に相当する
+    // (このメソッド内で全モジュールのexecute()がまとめて呼ばれる)。開始・終了を
+    // BeamContinuityRegistryへ通知し、輸送の継続/開始/終了を判定できるようにする。
+    @Inject(method = "executeModules", at = @At("HEAD"))
+    private void routerupgradecore$beginBeamContinuityTick(boolean pulseOnly, CallbackInfo ci) {
+        BeamContinuityRegistry.beginTick((ModularRouterBlockEntity) (Object) this);
+    }
+
+    @Inject(method = "executeModules", at = @At("TAIL"))
+    private void routerupgradecore$endBeamContinuityTick(boolean pulseOnly, CallbackInfo ci) {
+        BeamContinuityRegistry.endTick((ModularRouterBlockEntity) (Object) this);
+    }
 
     private static final Field MODULE_FIELD;
 
