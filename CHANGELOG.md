@@ -12,6 +12,7 @@
 ### Fixed
 
 - `addItemBeam`で追加されるビームの色を、アクティブなモードの`registerMode()`登録時`imageColor`へ無条件に上書きしていた挙動を削除。各`RouterModeProvider`実装がビームごとに指定した色がそのまま尊重されるようにした(FluidRouterUpgrade側で液体転送の方向ごとに個別の色を設定しても、常に単色になってしまう不具合の原因だった)。
+- ワールド再読み込み・リログイン直後にアクティブな`RouterModeProvider`を検出できず、`provider.load()`が呼ばれないまま(=永続化データが復元されないまま)になる不具合を修正。原因は、Upgrade装着判定にVanilla本体の`getUpgradeCount()`(次のtickで初めて構築される遅延キャッシュ)を使用していたため、`load()`直後の時点では常に0を返していたこと。`getUpgrades()`で生のUpgradeインベントリを直接走査する方式に変更した。
 
 ## [0.1.0] - 2026-08-29
 
