@@ -53,3 +53,19 @@ Vanilla本体の`ModularRouterBER`は、ビームの種別を区別せず全て�
 ## mode_upgrade_coreアイテムの追加(2026-09-01)
 
 `ModItems.MODE_UPGRADE_CORE`(`mode_upgrade_core`)は、現時点では機能を持たないプレースホルダーアイテムとして追加した。`RouterUpgradeCore`自体はFluid/Chemical等の具体的なモードロジックを持たないフレームワーク本体であるため、`FluidRouterUpgrade`の`FluidModeUpgrade`のように`RouterUpgradeCore.registerMode()`へ紐づく実装は無く、`registry.ModItems`への登録・テクスチャ・モデル・lang整備のみを行っている。CreativeModeTabへの登録も行っていない(入手は`/give`等による)。将来的に用途が定まった場合はこのアイテムに機能を追加するか、別アイテムへ置き換える。
+
+## mode_upgrade系アイテムのテクスチャ構成規約(2026-09-01、default化)
+
+`mode_upgrade_core`のテクスチャ(`routerupgradecore:item/mode_upgrade_core`)は、姉妹アドオンMOD(FluidRouterUpgrade・ChemicalRouterUpgrade等)が持つ各モード切り替えマーカーアイテムの共通ベース層として使う。アイテムモデルJSONで`layer0`にこのテクスチャを指定し、各アドオンMOD側は自分の担当領域を表す差分(アクセント)のみを描いた透過主体のテクスチャを自モッドの名前空間で用意して`layer1`に指定する(Vanillaの2レイヤーアイテムモデルの仕組みをそのまま利用、tintは使わない)。例(FluidRouterUpgradeの`fluid_mode_upgrade.json`):
+
+```json
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "routerupgradecore:item/mode_upgrade_core",
+    "layer1": "fluidrouterupgrade:item/fluid_mode_upgrade"
+  }
+}
+```
+
+この構成を、今後追加される全てのmode_upgrade系マーカーアイテム(ChemicalRouterUpgradeの`chemical_mode_upgrade`等)のdefaultのテクスチャ構成規約とする。各アドオンMOD側のアクセントテクスチャは、共通ベースの上に重ねて意味が通るよう、対応する領域のみ不透明にし、それ以外は透過にすること。
