@@ -86,7 +86,7 @@ public abstract class ModularRouterScreenMixin extends AbstractContainerScreen<R
             float green = ((tint >> 8) & 0xFF) / 255f;
             float blue = (tint & 0xFF) / 255f;
             RenderSystem.setShaderColor(red, green, blue, 1f);
-            GuiComponent.blit(poseStack, BUFFER_X, BUFFER_Y, BUFFER_DISPLAY_WIDTH, BUFFER_DISPLAY_HEIGHT, sprite);
+            GuiComponent.blit(poseStack, BUFFER_X, BUFFER_Y, 0, BUFFER_DISPLAY_WIDTH, BUFFER_DISPLAY_HEIGHT, sprite);
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
         }
 

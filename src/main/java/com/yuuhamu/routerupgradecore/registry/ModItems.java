@@ -12,5 +12,5 @@ public class ModItems {
             DeferredRegister.create(ForgeRegistries.ITEMS, RouterUpgradeCoreMod.MODID);
 
     public static final RegistryObject<Item> MODE_UPGRADE_CORE = REGISTRY.register("mode_upgrade_core",
-            () -> new Item(new Item.Properties()));
+            () -> new Item(new Item.Properties().tab(ModCreativeTabs.ROUTER_UPGRADE_CORE_TAB)));
 }
