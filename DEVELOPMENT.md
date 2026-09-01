@@ -49,3 +49,7 @@ Vanilla本体の`ModularRouterBER`は、ビームの種別を区別せず全て�
 ## ModeRegistryのマーカーアイテム検出とNBLロード直後のタイミング問題
 
 `ModeRegistry.scanMarkerItem()`は`router.getUpgradeCount()`(Vanilla本体の`compileUpgrades()`が構築するキャッシュに依存)を使わず、`router.getUpgrades()`が返す生の`IItemHandler`のスロットを直接走査する。`compileUpgrades()`自体はNBTロード直後ではなく次のtickで初めて実行される(`recompileNeeded`フラグによる遅延コンパイル方式)ため、`load()`直後に`getUpgradeCount()`を参照すると常に0が返り、実際にはUpgradeが挿入済みでもアクティブなProviderが見つからず、リログイン直後にタンク等の状態復元が一切行われない不具合があった。生スロット走査にすることでこのタイミング依存を回避している。
+
+## mode_upgrade_coreアイテムの追加(2026-09-01)
+
+`ModItems.MODE_UPGRADE_CORE`(`mode_upgrade_core`)は、現時点では機能を持たないプレースホルダーアイテムとして追加した。`RouterUpgradeCore`自体はFluid/Chemical等の具体的なモードロジックを持たないフレームワーク本体であるため、`FluidRouterUpgrade`の`FluidModeUpgrade`のように`RouterUpgradeCore.registerMode()`へ紐づく実装は無く、`registry.ModItems`への登録・テクスチャ・モデル・lang整備のみを行っている。CreativeModeTabへの登録も行っていない(入手は`/give`等による)。将来的に用途が定まった場合はこのアイテムに機能を追加するか、別アイテムへ置き換える。

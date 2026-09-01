@@ -7,6 +7,7 @@
 
 ### Added
 
+- `mode_upgrade_core`アイテムを追加(現時点では機能を持たないプレースホルダー)。
 - `RouterUpgradeCore.markBeamNoPulse(BeamData)`APIを新規追加。指定したBeamDataについて、Vanilla本体`ModularRouterBER`が中心ビーム(BEAM_LINE_THICK)に常時適用している1秒周期のアルファ点滅を無効化し、常に最大値で一定描画されるようにする。姉妹アドオンMOD(FluidRouterUpgrade等)が、独自の周辺エフェクトで転送演出を行いたい場合にVanilla本体の点滅と重ならないよう用意した。
 - `RouterUpgradeCore.reportBeamActive(router, beamKey, startAction, stopAction)`APIを新規追加。「稼働タイミング(executeModules呼び出し)ごとに輸送が継続しているか」を追跡し、新規開始時のみstartActionを呼び、継続中は表示を維持し、輸送が行われなかった稼働タイミングが来た時点で自動的にstopActionを呼ぶ。姉妹アドオンMODが、duration(表示時間)による自動失効に頼らず、稼働タイミングと厳密に同期した視覚効果を実装できるようにするためのもの。
 
