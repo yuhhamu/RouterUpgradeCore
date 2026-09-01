@@ -52,7 +52,7 @@ Vanilla本体の`ModularRouterBER`は、ビームの種別を区別せず全て�
 
 ## mode_upgrade_coreアイテムの追加(2026-09-01)
 
-`ModItems.MODE_UPGRADE_CORE`(`mode_upgrade_core`)は、現時点では機能を持たないプレースホルダーアイテムとして追加した。`RouterUpgradeCore`自体はFluid/Chemical等の具体的なモードロジックを持たないフレームワーク本体であるため、`FluidRouterUpgrade`の`FluidModeUpgrade`のように`RouterUpgradeCore.registerMode()`へ紐づく実装は無く、`registry.ModItems`への登録・テクスチャ・モデル・lang整備のみを行っている。CreativeModeTabへの登録も行っていない(入手は`/give`等による)。将来的に用途が定まった場合はこのアイテムに機能を追加するか、別アイテムへ置き換える。
+`ModItems.MODE_UPGRADE_CORE`(`mode_upgrade_core`)は、機能を持たないアイテムである。`RouterUpgradeCore`自体はFluid/Chemical等の具体的なモードロジックを持たないフレームワーク本体であるため、`FluidRouterUpgrade`の`FluidModeUpgrade`のように`RouterUpgradeCore.registerMode()`へ紐づく実装は無く、`registry.ModItems`への登録・テクスチャ・モデル・lang整備のみを行っている。CreativeModeTabへの登録も行っていない(入手は`/give`等による)。
 
 ## mode_upgrade系アイテムのテクスチャ構成規約(2026-09-01、default化)
 
