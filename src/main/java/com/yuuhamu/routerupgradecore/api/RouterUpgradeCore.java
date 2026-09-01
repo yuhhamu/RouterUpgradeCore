@@ -27,30 +27,10 @@ public final class RouterUpgradeCore {
         return ModeRegistry.getActiveProvider(router);
     }
 
-    /**
-     * 指定したBeamDataについて、Vanilla本体(ModularRouterBER)による1秒周期の
-     * アルファ点滅を適用せず、常に一定の明るさで描画されるようにする。
-     * FluidRouterUpgrade等の具体実装が、router.addItemBeam(BeamData)を呼ぶ前に
-     * (reverseItems()/fadeItems()等の変換を全て適用し終えた、実際に渡す最終的な
-     * インスタンスに対して)このメソッドで登録することを想定している。
-     */
     public static void markBeamNoPulse(BeamData beam) {
         BeamPulseRegistry.markNoPulse(beam);
     }
 
-    /**
-     * 稼働タイミング(executeModules呼び出し)ごとに、指定したbeamKeyで表される
-     * 視覚効果(ビーム等)が輸送に成功して継続していることを報告する。
-     *
-     * 直前の稼働タイミングまでこのbeamKeyが報告されていなかった(=新規開始)場合のみ
-     * startActionを1回呼び出す。既に継続中の場合は何もしない(表示をそのまま維持)。
-     * その後、輸送が行われなかった稼働タイミングが来た時点(このメソッドが呼ばれ
-     * なかった時点)で、開始時に渡したstopActionが自動的に1回だけ呼び出される。
-     *
-     * beamKeyはRouterModeProvider実装側が用意する、視覚効果を一意に識別できる
-     * 任意のオブジェクト(equals/hashCodeが適切に実装されたもの、例えばrecord)を
-     * 渡すこと。
-     */
     public static void reportBeamActive(ModularRouterBlockEntity router, Object beamKey,
                                          Runnable startAction, Runnable stopAction) {
         BeamContinuityRegistry.reportActive(router, beamKey, startAction, stopAction);

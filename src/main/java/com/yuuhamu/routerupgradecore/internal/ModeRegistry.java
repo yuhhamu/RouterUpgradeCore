@@ -85,12 +85,6 @@ public final class ModeRegistry {
     }
 
     private static Item scanMarkerItem(ModularRouterBlockEntity router) {
-        // NOTE: router.getUpgradeCount()はVanilla本体のcompileUpgrades()が構築するキャッシュに
-        // 依存しており、compileUpgrades()自体はNBTロード直後ではなく次のtickで初めて実行される
-        // (recompileNeededフラグの遅延コンパイル方式)。そのため load() 直後にgetUpgradeCount()を
-        // 参照すると常に0が返り、実際にはUpgradeが挿入済みでもアクティブなProviderが見つからず、
-        // リログイン直後にタンク等の状態復元が一切行われない不具合の原因になっていた。
-        // upgradesHandlerの生スロットを直接走査することで、このタイミング依存を回避する。
         IItemHandler upgrades = router.getUpgrades();
         for (int i = 0; i < upgrades.getSlots(); i++) {
             ItemStack stack = upgrades.getStackInSlot(i);

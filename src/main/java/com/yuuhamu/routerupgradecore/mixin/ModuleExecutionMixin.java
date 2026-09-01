@@ -19,9 +19,6 @@ import java.lang.reflect.Field;
 @Mixin(value = ModularRouterBlockEntity.class, remap = false)
 public abstract class ModuleExecutionMixin {
 
-    // executeModules()は1回の呼び出しがそのルーターの「稼働タイミング」1回分に相当する
-    // (このメソッド内で全モジュールのexecute()がまとめて呼ばれる)。開始・終了を
-    // BeamContinuityRegistryへ通知し、輸送の継続/開始/終了を判定できるようにする。
     @Inject(method = "executeModules", at = @At("HEAD"))
     private void routerupgradecore$beginBeamContinuityTick(boolean pulseOnly, CallbackInfo ci) {
         BeamContinuityRegistry.beginTick((ModularRouterBlockEntity) (Object) this);
