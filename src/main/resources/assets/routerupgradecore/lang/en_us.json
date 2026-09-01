@@ -1,3 +1,4 @@
 {
-  "item.routerupgradecore.mode_upgrade_core": "Mode Upgrade (Core)"
+  "item.routerupgradecore.mode_upgrade_core": "Mode Upgrade Core",
+  "itemGroup.routerupgradecore": "RouterUpgradeCore"
 }
