@@ -4,7 +4,7 @@ Router Upgrade Coreの内部設計と、各Mixin/APIクラスの役割をまと�
 
 ## 全体設計
 
-Vanilla `ModularRouterBlockEntity`は`AttachCapabilitiesEvent`では後付けのcapabilityを一切公開できない(`getCapability()`が常に自前のバケツアダプタで無条件に上書きするため)ことが実デコンパイルで確認済みのため、Mixin注入による直接介入が必須。
+Vanilla `ModularRouterBlockEntity#getCapability()`は常に自前のバケツアダプタで無条件に上書きするため、`AttachCapabilitiesEvent`経由で後付けのcapabilityを公開することはできない。本Modは`ModularRouterBlockEntityMixin`によるMixin注入でこれに対応する。
 
 `com.yuuhamu.routerupgradecore.api.RouterModeProvider`が姉妹アドオンMOD向けの公開インターフェースで、`RouterUpgradeCore.registerMode(markerUpgradeItem, provider, imageColor)`で登録する。`ModeRegistry`(internal)がマーカーUpgradeアイテムとproviderの対応を保持し、Routerの`upgradesHandler`に登録済みマーカーが1つでも入っていれば該当providerを「アクティブ」として扱う。
 
@@ -46,9 +46,9 @@ Vanilla `ModularRouterBlockEntity`は`AttachCapabilitiesEvent`では後付けの
 
 Vanilla本体の`ModularRouterBER`は、ビームの種別を区別せず全ての`BeamData`に同じ1秒周期のアルファ点滅(`getGameTime()`基準のsin波、alpha 32〜160)を適用する。`RouterUpgradeCore.markBeamNoPulse(BeamData)`で登録したビームに限り、`ModularRouterBERMixin`が`renderBeamLine`の該当ローカル変数をModifyVariableで160(最大輝度)に固定し、点滅を無効化する。register対象は`BeamData`の参照そのものをキーにした`WeakHashMap`(`BeamPulseRegistry`)で管理し、Vanilla側のビームリストから失効・GCされれば自動的にエントリも消える。点滅演出自体は各具体実装側の周辺エフェクト(例: FluidRouterUpgradeのハローライン)に持たせる方針。
 
-## ModeRegistryのマーカーアイテム検出とNBLロード直後のタイミング問題
+## ModeRegistryのマーカーアイテム検出方式
 
-`ModeRegistry.scanMarkerItem()`は`router.getUpgradeCount()`(Vanilla本体の`compileUpgrades()`が構築するキャッシュに依存)を使わず、`router.getUpgrades()`が返す生の`IItemHandler`のスロットを直接走査する。`compileUpgrades()`自体はNBTロード直後ではなく次のtickで初めて実行される(`recompileNeeded`フラグによる遅延コンパイル方式)ため、`load()`直後に`getUpgradeCount()`を参照すると常に0が返り、実際にはUpgradeが挿入済みでもアクティブなProviderが見つからず、リログイン直後にタンク等の状態復元が一切行われない不具合があった。生スロット走査にすることでこのタイミング依存を回避している。
+`ModeRegistry.scanMarkerItem()`は`router.getUpgradeCount()`(Vanilla本体の`compileUpgrades()`が構築する遅延キャッシュに依存)を使わず、`router.getUpgrades()`が返す生の`IItemHandler`のスロットを直接走査する(経緯はObsidian Knowledge/`routerupgradecore-moderegistry-nbt-load-timing`参照)。
 
 ## mode_upgrade_coreアイテムの追加(2026-09-01)
 
