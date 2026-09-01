@@ -1,6 +1,7 @@
 package com.yuuhamu.routerupgradecore.mixin;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.yuuhamu.routerupgradecore.api.RouterModeProvider;
 import com.yuuhamu.routerupgradecore.internal.ModeRegistry;
 import com.yuuhamu.routerupgradecore.network.BufferSlotInteractMessage;
@@ -9,12 +10,14 @@ import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.gui.ModularRouterScreen;
 import me.desht.modularrouters.container.RouterMenu;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
@@ -25,8 +28,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 
+/*
+ * 1.19.2向け移植メモ(2026-09-01): 1.19.2にはGuiGraphicsが存在せず、renderLabels/描画はPoseStack直描画。
+ * Screenの protected な renderComponentTooltip(PoseStack, List<Component>, int, int) を呼ぶため、
+ * BufferHandlerMixin(ItemStackHandlerを継承)と同じ確立済みパターンで、このMixinクラス自体を
+ * AbstractContainerScreen<RouterMenu>(実際の継承チェーンの一部)に見せかけて継承する。
+ * コンストラクタはMixinのマージ対象外(呼び出されない)ため、javacの型解決だけを満たすダミー実装。
+ */
 @Mixin(value = ModularRouterScreen.class, remap = false)
-public abstract class ModularRouterScreenMixin {
+public abstract class ModularRouterScreenMixin extends AbstractContainerScreen<RouterMenu> {
 
     private static final int ICON_X = 30;
     private static final int ICON_Y = 39;
@@ -38,27 +48,32 @@ public abstract class ModularRouterScreenMixin {
     private static final int BUFFER_DISPLAY_HEIGHT = 16;
     private static final int BUFFER_DISPLAY_BG_COLOR = 0xFF373737;
 
-    @Inject(method = {"renderLabels", "m_280003_"}, at = @At("TAIL"))
-    private void routerupgradecore$renderActiveModeIcon(GuiGraphics graphics, int mouseX, int mouseY, CallbackInfo ci) {
+    protected ModularRouterScreenMixin(RouterMenu menu, Inventory inventory, Component title) {
+        super(menu, inventory, title);
+    }
+
+    @Inject(method = {"renderLabels", "m_7027_"}, at = @At("TAIL"))
+    private void routerupgradecore$renderActiveModeIcon(PoseStack poseStack, int mouseX, int mouseY, CallbackInfo ci) {
         ModularRouterBlockEntity router = ((RouterMenu) ((MenuAccess<?>) this).getMenu()).getRouter();
         Item marker = ModeRegistry.getActiveMarkerItem(router);
         if (marker == null) {
             return;
         }
         ItemStack stack = new ItemStack(marker);
-        graphics.renderItem(stack, ICON_X, ICON_Y);
-        graphics.renderItemDecorations(net.minecraft.client.Minecraft.getInstance().font, stack, ICON_X, ICON_Y);
+        Minecraft.getInstance().getItemRenderer().renderGuiItem(stack, ICON_X, ICON_Y);
+        Minecraft.getInstance().getItemRenderer().renderGuiItemDecorations(
+                Minecraft.getInstance().font, stack, ICON_X, ICON_Y);
 
         RouterModeProvider provider = ModeRegistry.getActiveProvider(router);
         if (provider == null) {
             return;
         }
-        renderBufferGauge(graphics, router, provider, mouseX, mouseY);
+        renderBufferGauge(poseStack, router, provider, mouseX, mouseY);
     }
 
-    private void renderBufferGauge(GuiGraphics graphics, ModularRouterBlockEntity router,
+    private void renderBufferGauge(PoseStack poseStack, ModularRouterBlockEntity router,
                                     RouterModeProvider provider, int mouseX, int mouseY) {
-        graphics.fill(BUFFER_X, BUFFER_Y, BUFFER_X + BUFFER_DISPLAY_WIDTH, BUFFER_Y + BUFFER_DISPLAY_HEIGHT,
+        GuiComponent.fill(poseStack, BUFFER_X, BUFFER_Y, BUFFER_X + BUFFER_DISPLAY_WIDTH, BUFFER_Y + BUFFER_DISPLAY_HEIGHT,
                 BUFFER_DISPLAY_BG_COLOR);
 
         ResourceLocation texture = provider.getBufferContentTexture(router);
@@ -71,7 +86,7 @@ public abstract class ModularRouterScreenMixin {
             float green = ((tint >> 8) & 0xFF) / 255f;
             float blue = (tint & 0xFF) / 255f;
             RenderSystem.setShaderColor(red, green, blue, 1f);
-            graphics.blit(BUFFER_X, BUFFER_Y, 0, BUFFER_DISPLAY_WIDTH, BUFFER_DISPLAY_HEIGHT, sprite);
+            GuiComponent.blit(poseStack, BUFFER_X, BUFFER_Y, BUFFER_DISPLAY_WIDTH, BUFFER_DISPLAY_HEIGHT, sprite);
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
         }
 
@@ -82,7 +97,7 @@ public abstract class ModularRouterScreenMixin {
                 && localMouseY >= BUFFER_Y && localMouseY < BUFFER_Y + BUFFER_DISPLAY_HEIGHT) {
             List<Component> tooltip = provider.getBufferTooltip(router);
             if (!tooltip.isEmpty()) {
-                graphics.renderComponentTooltip(Minecraft.getInstance().font, tooltip, localMouseX, localMouseY);
+                this.renderComponentTooltip(poseStack, tooltip, localMouseX, localMouseY);
             }
         }
     }
@@ -107,4 +122,3 @@ public abstract class ModularRouterScreenMixin {
         cir.setReturnValue(true);
     }
 }
-
