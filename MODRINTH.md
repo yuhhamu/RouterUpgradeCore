@@ -10,7 +10,7 @@ Router Upgrade Core is a framework mod that lets a vanilla ModularRouters Router
 
 - Minecraft: 1.20.1
 - ModLoader: Forge 47.4.6+
-- Dependencies: [Modular Routers](https://www.curseforge.com/minecraft/mc-mods/modular-routers) (required)
+- Dependencies: [Modular Routers](https://modrinth.com/mod/modular-routers) (required)
 
 ## Installation
 
@@ -20,8 +20,8 @@ Router Upgrade Core is a framework mod that lets a vanilla ModularRouters Router
 
 ## Supported Addon Mods
 
-- [Fluid Router Upgrade](https://www.curseforge.com/minecraft/mc-mods/fluidrouterupgrade) — adds transfer support for Forge Fluids (water, lava, and more).
-- [Chemical Router Upgrade](https://www.curseforge.com/minecraft/mc-mods/chemicalrouterupgrade) — adds transfer support for Mekanism Chemicals (Gas, Infusion, Pigment, Slurry).
+- [Fluid Router Upgrade](https://modrinth.com/mod/fluid-router-upgrade) — adds transfer support for Forge Fluids (water, lava, and more).
+- [Chemical Router Upgrade](https://modrinth.com/mod/chemical-router-upgrade) — adds transfer support for Mekanism Chemicals (Gas, Infusion, Pigment, Slurry).
 
 ## Known Limitations
 
@@ -52,7 +52,7 @@ Router Upgrade Coreは、VanillaのModularRoutersのRouterブロックが、専�
 
 - Minecraft: 1.20.1
 - ModLoader: Forge 47.4.6以降
-- 依存Mod: [Modular Routers](https://www.curseforge.com/minecraft/mc-mods/modular-routers)(必須)
+- 依存Mod: [Modular Routers](https://modrinth.com/mod/modular-routers)(必須)
 
 ## 導入方法
 
@@ -62,8 +62,8 @@ Router Upgrade Coreは、VanillaのModularRoutersのRouterブロックが、専�
 
 ## 対応アドオンMOD
 
-- [Fluid Router Upgrade](https://www.curseforge.com/minecraft/mc-mods/fluidrouterupgrade) — Forge Fluid(水・溶岩など)の転送に対応します。
-- [Chemical Router Upgrade](https://www.curseforge.com/minecraft/mc-mods/chemicalrouterupgrade) — Mekanism Chemical(気体・注入・顔料・スラリー)の転送に対応します。
+- [Fluid Router Upgrade](https://modrinth.com/mod/fluid-router-upgrade) — Forge Fluid(水・溶岩など)の転送に対応します。
+- [Chemical Router Upgrade](https://modrinth.com/mod/chemical-router-upgrade) — Mekanism Chemical(気体・注入・顔料・スラリー)の転送に対応します。
 
 ## 既知の制限
 
