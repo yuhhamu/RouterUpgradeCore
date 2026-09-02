@@ -4,7 +4,7 @@ import com.yuuhamu.routerupgradecore.internal.ModeRegistry;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.container.handler.BufferHandler;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.ItemStackHandler;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -24,4 +24,3 @@ public abstract class BufferHandlerMixin extends ItemStackHandler {
         return super.isItemValid(slot, stack);
     }
 }
-

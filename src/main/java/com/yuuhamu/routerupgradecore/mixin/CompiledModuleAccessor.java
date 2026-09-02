@@ -1,33 +1,14 @@
 package com.yuuhamu.routerupgradecore.mixin;
 
-import me.desht.modularrouters.logic.ModuleTarget;
-import me.desht.modularrouters.logic.compiled.CompiledModule;
-import net.minecraft.core.Direction;
-import net.minecraft.world.item.Item;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Invoker;
-
-import java.util.List;
-
-@Mixin(value = CompiledModule.class, remap = false)
-public interface CompiledModuleAccessor {
-
-    @Invoker("getTarget")
-    ModuleTarget routerupgradecore$invokeGetTarget();
-
-    @Invoker("getTargets")
-    List<ModuleTarget> routerupgradecore$invokeGetTargets();
-
-    @Invoker("getFacing")
-    Direction routerupgradecore$invokeGetFacing();
-
-    @Invoker("getRange")
-    int routerupgradecore$invokeGetRange();
-
-    @Invoker("getRangeSquared")
-    int routerupgradecore$invokeGetRangeSquared();
-
-    @Invoker("getAugmentCount")
-    int routerupgradecore$invokeGetAugmentCount(Item augment);
+/**
+ * 廃止: NeoForge版のme.desht.modularrouters.logic.compiled.CompiledModuleでは
+ * getTarget/getTargets/getRange/getRangeSquared/getAugmentCount/getAbsoluteFacing(旧getFacing)が
+ * すべてpublicへ変更されたため、Mixin Accessor経由でのアクセスは不要になった。
+ * 呼び出し側は com.yuuhamu.routerupgradecore.api.ModuleTargeting から直接呼び出す。
+ * (このファイルはdevice_bashのマウント制約でファイル削除ができないため、
+ * 空のプレースホルダとして残置している。routerupgradecore.mixins.jsonからは既に除外済み。)
+ */
+final class CompiledModuleAccessor {
+    private CompiledModuleAccessor() {
+    }
 }
-

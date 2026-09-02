@@ -13,8 +13,9 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(value = ModularRouterBER.class, remap = false)
 public abstract class ModularRouterBERMixin {
 
-    @Redirect(method = "render", at = @At(value = "INVOKE",
-            target = "Lme/desht/modularrouters/block/tile/ModularRouterBlockEntity;getCamouflage()Lnet/minecraft/world/level/block/state/BlockState;"))
+    @Redirect(method = "render(Lme/desht/modularrouters/block/tile/ModularRouterBlockEntity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;II)V",
+            at = @At(value = "INVOKE",
+                    target = "Lme/desht/modularrouters/block/tile/ModularRouterBlockEntity;getCamouflage()Lnet/minecraft/world/level/block/state/BlockState;"))
     private BlockState routerupgradecore$realCamouflageForHighlightOnly(ModularRouterBlockEntity router) {
         return ((ModularRouterCamouflageAccessor) router).routerupgradecore$getRealCamouflage();
     }

@@ -40,7 +40,7 @@ public abstract class ModuleExecutionMixin {
         }
     }
 
-    @Redirect(method = "executeModules", at = @At(value = "INVOKE",
+    @Redirect(method = "runAllModules", at = @At(value = "INVOKE",
             target = "Lme/desht/modularrouters/logic/compiled/CompiledModule;execute(Lme/desht/modularrouters/block/tile/ModularRouterBlockEntity;)Z"))
     private boolean routerupgradecore$redirectExecute(CompiledModule compiledModule, ModularRouterBlockEntity router) {
         ModuleItem moduleItem = getModuleItem(compiledModule);
@@ -79,4 +79,3 @@ public abstract class ModuleExecutionMixin {
         return null;
     }
 }
-

@@ -4,18 +4,18 @@ import com.yuuhamu.routerupgradecore.RouterUpgradeCoreMod;
 import com.yuuhamu.routerupgradecore.api.RouterVisualBlock;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RegisterColorHandlersEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = RouterUpgradeCoreMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(modid = RouterUpgradeCoreMod.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public final class RouterUpgradeCoreClientEvents {
 
     private RouterUpgradeCoreClientEvents() {
@@ -24,7 +24,7 @@ public final class RouterUpgradeCoreClientEvents {
     @SubscribeEvent
     public static void onRegisterBlockColors(RegisterColorHandlersEvent.Block event) {
         List<Block> targets = new ArrayList<>();
-        for (Block block : ForgeRegistries.BLOCKS) {
+        for (Block block : BuiltInRegistries.BLOCK) {
             if (block instanceof RouterVisualBlock) {
                 targets.add(block);
             }
@@ -46,7 +46,7 @@ public final class RouterUpgradeCoreClientEvents {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
-            for (Block block : ForgeRegistries.BLOCKS) {
+            for (Block block : BuiltInRegistries.BLOCK) {
                 if (block instanceof RouterVisualBlock) {
                     ItemBlockRenderTypes.setRenderLayer(block, RenderType.cutout());
                 }
@@ -54,4 +54,3 @@ public final class RouterUpgradeCoreClientEvents {
         });
     }
 }
-

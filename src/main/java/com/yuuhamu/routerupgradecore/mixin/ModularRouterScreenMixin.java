@@ -4,7 +4,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.yuuhamu.routerupgradecore.api.RouterModeProvider;
 import com.yuuhamu.routerupgradecore.internal.ModeRegistry;
 import com.yuuhamu.routerupgradecore.network.BufferSlotInteractMessage;
-import com.yuuhamu.routerupgradecore.network.PacketHandler;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import me.desht.modularrouters.client.gui.ModularRouterScreen;
 import me.desht.modularrouters.container.RouterMenu;
@@ -17,6 +16,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -38,7 +38,7 @@ public abstract class ModularRouterScreenMixin {
     private static final int BUFFER_DISPLAY_HEIGHT = 16;
     private static final int BUFFER_DISPLAY_BG_COLOR = 0xFF373737;
 
-    @Inject(method = {"renderLabels", "m_280003_"}, at = @At("TAIL"))
+    @Inject(method = "renderLabels", at = @At("TAIL"))
     private void routerupgradecore$renderActiveModeIcon(GuiGraphics graphics, int mouseX, int mouseY, CallbackInfo ci) {
         ModularRouterBlockEntity router = ((RouterMenu) ((MenuAccess<?>) this).getMenu()).getRouter();
         Item marker = ModeRegistry.getActiveMarkerItem(router);
@@ -47,7 +47,7 @@ public abstract class ModularRouterScreenMixin {
         }
         ItemStack stack = new ItemStack(marker);
         graphics.renderItem(stack, ICON_X, ICON_Y);
-        graphics.renderItemDecorations(net.minecraft.client.Minecraft.getInstance().font, stack, ICON_X, ICON_Y);
+        graphics.renderItemDecorations(Minecraft.getInstance().font, stack, ICON_X, ICON_Y);
 
         RouterModeProvider provider = ModeRegistry.getActiveProvider(router);
         if (provider == null) {
@@ -87,7 +87,7 @@ public abstract class ModularRouterScreenMixin {
         }
     }
 
-    @Inject(method = {"mouseClicked", "m_6375_"}, at = @At("HEAD"), cancellable = true)
+    @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
     private void routerupgradecore$mouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
         if (button != 0 && button != 1) {
             return;
@@ -103,8 +103,7 @@ public abstract class ModularRouterScreenMixin {
                 || localMouseY < BUFFER_Y || localMouseY >= BUFFER_Y + BUFFER_DISPLAY_HEIGHT) {
             return;
         }
-        PacketHandler.NETWORK.sendToServer(new BufferSlotInteractMessage(router.getBlockPos(), button == 0));
+        PacketDistributor.sendToServer(new BufferSlotInteractMessage(router.getBlockPos(), button == 0));
         cir.setReturnValue(true);
     }
 }
-

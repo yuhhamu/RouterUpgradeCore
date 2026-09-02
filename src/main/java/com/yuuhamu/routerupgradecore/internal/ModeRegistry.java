@@ -5,7 +5,7 @@ import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandler;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -95,4 +95,3 @@ public final class ModeRegistry {
         return null;
     }
 }
-

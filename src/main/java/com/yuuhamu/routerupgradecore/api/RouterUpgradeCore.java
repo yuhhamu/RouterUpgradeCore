@@ -7,8 +7,7 @@ import me.desht.modularrouters.util.BeamData;
 import me.desht.modularrouters.block.tile.ModularRouterBlockEntity;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
+import net.neoforged.neoforge.capabilities.BlockCapability;
 
 public final class RouterUpgradeCore {
 
@@ -36,13 +35,18 @@ public final class RouterUpgradeCore {
         BeamContinuityRegistry.reportActive(router, beamKey, startAction, stopAction);
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T> LazyOptional<T> getActiveCapability(ModularRouterBlockEntity router, Capability<T> capability, Direction side) {
+    /**
+     * 現在アクティブなRouterModeProviderへcapability要求を委譲する。
+     * アドオンMod(FluidRouterUpgrade等)は自身の{@code RegisterCapabilitiesEvent}リスナーから
+     * このメソッドを呼び出し、ModularRoutersのRouter BlockEntityType向けにcapabilityを登録すること。
+     */
+    public static <T> T getActiveCapability(ModularRouterBlockEntity router,
+                                             BlockCapability<T, Direction> capability,
+                                             Direction side) {
         RouterModeProvider provider = ModeRegistry.getActiveProvider(router);
         if (provider == null) {
-            return LazyOptional.empty();
+            return null;
         }
-        return (LazyOptional<T>) provider.getCapability(router, capability, side, LazyOptional.empty());
+        return provider.getCapability(router, capability, side);
     }
 }
-
