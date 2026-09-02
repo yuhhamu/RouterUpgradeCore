@@ -10,6 +10,6 @@
     "ARA",
     " A "
   ],
-  "result": { "count": 1, "item": "routerupgradecore:mode_upgrade_core" },
+  "result": { "count": 4, "item": "routerupgradecore:mode_upgrade_core" },
   "show_notification": true
 }
