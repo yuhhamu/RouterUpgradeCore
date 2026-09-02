@@ -20,8 +20,8 @@ Router Upgrade Core is a framework mod that lets a vanilla ModularRouters Router
 
 ## Supported Addon Mods
 
-- [Fluid Router Upgrade](https://www.curseforge.com/minecraft/mc-mods/fluidrouterupgrade) — adds transfer support for Forge Fluids (water, lava, and more).
-- [Chemical Router Upgrade](https://www.curseforge.com/minecraft/mc-mods/chemicalrouterupgrade) — adds transfer support for Mekanism Chemicals (Gas, Infusion, Pigment, Slurry).
+- [Fluid Router Upgrade](https://www.curseforge.com/minecraft/mc-mods/fluid-router-upgrade) — adds transfer support for Forge Fluids (water, lava, and more).
+- [Chemical Router Upgrade](https://www.curseforge.com/minecraft/mc-mods/chemical-router-upgrade) — adds transfer support for Mekanism Chemicals (Gas, Infusion, Pigment, Slurry).
 
 ## Known Limitations
 
@@ -62,8 +62,8 @@ Router Upgrade Coreは、VanillaのModularRoutersのRouterブロックが、専�
 
 ## 対応アドオンMOD
 
-- [Fluid Router Upgrade](https://www.curseforge.com/minecraft/mc-mods/fluidrouterupgrade) — Forge Fluid(水・溶岩など)の転送に対応します。
-- [Chemical Router Upgrade](https://www.curseforge.com/minecraft/mc-mods/chemicalrouterupgrade) — Mekanism Chemical(気体・注入・顔料・スラリー)の転送に対応します。
+- [Fluid Router Upgrade](https://www.curseforge.com/minecraft/mc-mods/fluid-router-upgrade) — Forge Fluid(水・溶岩など)の転送に対応します。
+- [Chemical Router Upgrade](https://www.curseforge.com/minecraft/mc-mods/chemical-router-upgrade) — Mekanism Chemical(気体・注入・顔料・スラリー)の転送に対応します。
 
 ## 既知の制限
 
